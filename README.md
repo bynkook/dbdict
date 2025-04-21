@@ -1,16 +1,60 @@
-#프로그램 설명
-dict_work 내부에 있는 None 값을 dict_db, dict_word 에 주어져 있는 데이터를 사용하여 채워넣는 프로그램
-dict_db, dict_work 의 'en' 키는 dict 의 key(텍스트값)에 대응하는 영어 설명문
-dict_db, dict_work 의 'ko' 키는 dict 의 key(텍스트값)에 대응하는 한국어 설명문
+# Dictionary Auto-Fill Utility
 
-#작동 방법
-dict_work 의 key 를 읽는다. 'en' key 와 'ko' key 의 value 중 어느 하나라도 None 이 있으면 아래 1, 2 의 작업을 한다.
-1. 그 key 가 dict_db 의 key 와 일치되는 매칭이 있으면 dict_work 의 value 를 업데이트 한다.
-2. dict_db 의 key 와 일치되는 매칭이 없으면, key 를 seperator 들을 이용해서 split 하여 list1 에 임시로 저장한다.
-그 list 의 각각의 값에 매칭되는 key 를 dict_word 에서 찾게되면, list2 에 'en' key의 value 를 append, list3 에는 'ko' key의 value 를 append 한다.  만약 dict_word 에서 매칭되는 key 가 없으면 'None' 을 append 한다.
-list2의 값들을 textjoin 하여 eng_name 에 저장. list3의 값들을 textjoin 하여 kor_name 에 저장.  이때 textjoin은 space(공백)으로 한다.
-만약 keep_key_format = False 라면, list1의 값을 사용해서 textjoin 하여 new_key에 저장한다.  이때 textjoin 은 '_'로 한다.  key 값을 new_key 로 replace 한다.
-keep_key_format = True 라면, dict_work 의 key 값을 유지한다.
-'en' key의 value 를 eng_name 으로 업데이트 한다. 'ko' key의 value 를 kor_name 으로 업데이트 한다.
-이 과정을 반복해서 dict_work 의 모든 None 값이 제거된다.
-dict_work 을 모두 print 하고 작업을 종료한다.
+## 📌 개요
+
+이 Python 스크립트는 `dict_work` 내 비어 있는(`None`) 값을 기준 데이터 사전(`dict_db`, `dict_word`)을 활용하여 자동으로 채워주는 유틸리티입니다. 키(Key) 기반의 매칭과 문자열 분해(split) 방식을 혼합하여 최대한 정확하게 텍스트 정보를 자동으로 보완할 수 있습니다.
+
+## ⚙️ 작동 방식
+
+### 입력 구조
+
+- `dict_work`: 처리 대상 딕셔너리. 각 키는 `'en'`, `'ko'` 필드를 가지고 있으며, 일부 값이 `None`으로 비어 있음.
+- `dict_db`: 우선 참조되는 기준 사전. 완전 매칭되는 키의 경우 우선적으로 사용.
+- `dict_word`: 키 분해 시 사용되는 단어 단위 사전.
+
+### 처리 로직
+
+1. `dict_work` 내 각 항목에 대해 다음 조건을 검사:
+   - `'en'` 또는 `'ko'` 값 중 하나라도 `None`인 경우
+
+2. 아래 두 단계로 채움:
+   - **1단계:** 키가 `dict_db`에 완전히 일치할 경우 해당 값을 바로 채움.
+   - **2단계:** 일치하지 않을 경우, 다음 절차 수행:
+     - 지정된 `separator` 목록(`[' ', '-', '_', '*']`)으로 키를 분할하여 `list1` 생성
+     - `list1`의 각 요소가 `dict_word`에 존재하는지 검사
+       - 존재 시 `list2`에 영어 설명(`'en'`), `list3`에 한국어 설명(`'ko'`) 추가
+       - 없을 경우 `'None'`을 해당 리스트에 추가
+
+3. 리스트 조합:
+   - `list2`를 공백으로 조합하여 `eng_name` 생성
+   - `list3`를 공백으로 조합하여 `kor_name` 생성
+
+4. 키 포맷 변경 조건 (`keep_key_format`):
+   - `False`일 경우: `list1`을 `'_'`으로 조합하여 새로운 키(`new_key`) 생성 후 `dict_work`의 키를 교체
+   - `True`일 경우: 기존 키를 그대로 유지
+
+5. 최종적으로:
+   - `'en'` 값을 `eng_name`으로 업데이트
+   - `'ko'` 값을 `kor_name`으로 업데이트
+
+6. 모든 항목의 None 값이 처리될 때까지 위 과정을 반복
+
+7. 최종적으로 업데이트된 `dict_work` 전체를 출력하고 종료
+
+## 🧪 예시
+
+```python
+dict_word = {
+    'CONST': {'en': 'construction', 'ko': '공사'},
+    'AMT': {'en': 'amount', 'ko': '물량'},
+}
+
+dict_db = {
+    'CONST_PERD': {'en': 'construction period', 'ko': '건설공기'},
+}
+
+dict_work = {
+    'CONST_PERD': {'en': None, 'ko': None},
+    'AMT_CONST-01': {'en': None, 'ko': None},
+}
+
