@@ -1,4 +1,3 @@
-'''
 #프로그램 설명
 dict_work 내부에 있는 None 값을 dict_db, dict_word 에 주어져 있는 데이터를 사용하여 채워넣는 프로그램
 dict_db, dict_work 의 'en' 키는 dict 의 key(텍스트값)에 대응하는 영어 설명문
@@ -15,4 +14,3 @@ keep_key_format = True 라면, dict_work 의 key 값을 유지한다.
 'en' key의 value 를 eng_name 으로 업데이트 한다. 'ko' key의 value 를 kor_name 으로 업데이트 한다.
 이 과정을 반복해서 dict_work 의 모든 None 값이 제거된다.
 dict_work 을 모두 print 하고 작업을 종료한다.
-'''
